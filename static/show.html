@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Table</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- 引入jQuery庫 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- 引入Bootstrap JavaScript組件 -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <div style="text-align:center">
+    <button id="image-button">
+      <img src="/static/time-recorder.png" width="50">
+      打卡
+    </button>
+    </div>
+    
+ <script>
+    // 監聽按鈕點擊事件
+    $('#image-button').click(function() {
+      // 呼叫POST API
+      $.post('/api/process', function(data) {
+        // 如果API回傳的result為"ok"，則重新整理網頁
+        if (data.result === 'ok') {
+          location.reload();
+        } else {
+          // 否則彈出警告視窗
+          alert('有錯誤');
+        }
+      });
+    });
+  </script>
+
+  <div class="container">
+    <h1>打卡記錄</h1>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>打卡時間</th>
+          <th>遲到分鐘數</th>
+        </tr>
+      </thead>
+      <tbody id="records-table-body">
+        <!-- 這裡將使用JavaScript生成表格內容 -->
+      </tbody>
+    </table>
+  </div>
+
+
+
+  <script>
+    // 使用jQuery發送GET請求獲取打卡記錄
+    $.get('/api/get_all_records', function(response) {
+      if (response.result === 'ok') {
+        // 獲取打卡記錄數據
+        var records = response.data;
+        // 遍歷記錄數據，生成表格內容
+        for (var i = 0; i < records.length; i++) {
+          var record = records[i];
+          var row = $('<tr>');
+          var timeCell = $('<td>').text(record[0]);
+          var minutesLate = record[1];
+          var minutesLateCell = $('<td>').text(minutesLate);
+          // 根據遲到分鐘數決定表格背景顏色
+          if (minutesLate > 0) {
+            minutesLateCell.addClass('table-danger');
+          } else {
+            minutesLateCell.addClass('table-success');
+          }
+          row.append(timeCell);
+          row.append(minutesLateCell);
+          $('#records-table-body').append(row);
+        }
+      } else {
+        // 處理錯誤情況
+        console.error('獲取打卡記錄失敗：' + response.error);
+      }
+    });
+  </script>
+
+</body>
+</html>
