@@ -15,9 +15,17 @@ isdir = os.path.isdir(STATIC_FOLDER)
 if not isdir:
     os.makedirs(STATIC_FOLDER)
 
+DB_FOLDER = 'db'
+
+isdir = os.path.isdir(DB_FOLDER)
+if not isdir:
+    os.makedirs(DB_FOLDER)
+
+
 origins = [
-    "http://localhost",
-    "http://localhost:8080",
+    # "http://localhost",
+    # "http://localhost:8080",
+    '*'
 ]
 
 app = FastAPI()
@@ -29,7 +37,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-sqlite_db_filenbame = 'example.db'
+sqlite_db_filenbame = os.path.join(DB_FOLDER, 'example.db')
 
 if not os.path.isfile(sqlite_db_filenbame):
     with sqlite3.connect(sqlite_db_filenbame) as conn:
