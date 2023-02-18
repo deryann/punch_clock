@@ -1,5 +1,7 @@
 # punch_clock
 
+![Web Page Example](./figure/sample-page.png)
+
 
 ## Docker run command 
 
